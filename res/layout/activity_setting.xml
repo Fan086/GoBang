@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="100dp"
+    android:orientation="vertical" >
+    
+	<TextView 
+	    android:id="@+id/tv_game_settings"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"
+	    android:textSize="60sp"
+	    android:text="游戏设置"/>
+
+	<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/tv_game_settings"
+	    android:layout_marginTop="100dp" >
+
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
+	        android:text="行数与列数："
+	        android:textSize="50sp" />
+
+	    <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        android:orientation="horizontal" >
+
+	        <ImageButton
+	            android:id="@+id/btn_minus"
+	            android:layout_width="50dp"
+	            android:layout_height="60dp"
+	            android:background="@null"
+	            android:src="@drawable/minus" />
+
+	        <TextView
+	            android:id="@+id/tv_line_num"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="30dp"
+	            android:layout_marginRight="30dp"
+	            android:layout_gravity="center_vertical"
+	            android:text="15"
+	            android:textSize="50sp" />
+
+	        <ImageButton
+	            android:id="@+id/btn_plus"
+	            android:layout_width="50dp"
+	            android:layout_height="60dp"
+	            android:background="@null"
+	            android:src="@drawable/plus" />
+	    </LinearLayout>
+	</RelativeLayout>
+	<Button
+	    android:id="@+id/btn_setting_confirm"
+	    android:layout_width="400dp"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:layout_centerHorizontal="true"
+	    android:background="@drawable/button_shape"
+	    android:textSize="50sp"
+	    android:text="确定"
+	    
+	    />
+</RelativeLayout>

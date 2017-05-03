@@ -1,6 +1,8 @@
-package com.fndroid.gobang;
+package com.fndroid.gobang.utils;
 
 import java.util.LinkedList;
+
+import com.fndroid.gobang.GoBangPanel;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -92,7 +94,7 @@ public class GoBangUtils {
 	 * @return true表示是
 	 */
 	private static boolean checkIsDoubleWin(GoBangPanel panel) {
-		int lineNum = GoBangPanel.LINE_NUM;
+		int lineNum = GoBangPanel.mLineNum;
 		int allUnit = lineNum * lineNum;
 		LinkedList<Point> mBlackSteps = panel.mBlackSteps;
 		LinkedList<Point> mWhiteSteps = panel.mWhiteSteps;

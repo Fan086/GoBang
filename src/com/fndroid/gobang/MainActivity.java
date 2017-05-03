@@ -1,35 +1,34 @@
 package com.fndroid.gobang;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
 
-public class MainActivity extends Activity implements OnClickListener {
-	GoBangPanel panel;
+public class MainActivity extends Activity implements OnClickListener{
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		panel = (GoBangPanel) findViewById(R.id.panel_gobang);
-		
-		findViewById(R.id.btn_restart).setOnClickListener(this);
-		findViewById(R.id.btn_regret).setOnClickListener(this);
+		findViewById(R.id.btn_double_battle).setOnClickListener(this);
+		findViewById(R.id.btn_goto_setting).setOnClickListener(this);
 	}
+
 	@Override
 	public void onClick(View v) {
+		Intent intent = new Intent();
 		switch(v.getId()){
-		case R.id.btn_restart:
-			GoBangUtils.restart(panel);
+		case R.id.btn_double_battle:
+			intent.setClass(MainActivity.this, PanelActivity.class);
+			startActivity(intent);
 			break;
-		case R.id.btn_regret:
-//			Toast.makeText(MainActivity.this, "用户悔棋了", 0).show();
-			GoBangUtils.regret(panel);
+		case R.id.btn_goto_setting:
+			intent.setClass(MainActivity.this, SettingActivity.class);
+			startActivity(intent);
 			break;
 		}
 	}
-
-
 }

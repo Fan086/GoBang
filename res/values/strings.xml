@@ -4,5 +4,8 @@
     <string name="app_name">GoBang</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="game_title">五&#160;子&#160;棋&#160;大&#160;战</string>
+    <string name="double_battle">双人对战</string>
+    <string name="game_setting">设&#160;&#160;置</string>
 
 </resources>

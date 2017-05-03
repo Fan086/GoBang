@@ -2,9 +2,12 @@ package com.fndroid.gobang;
 
 import java.util.LinkedList;
 
+import com.fndroid.gobang.utils.GoBangUtils;
+import static com.fndroid.gobang.utils.GoBangConstants.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,9 +27,9 @@ public class GoBangPanel extends View{
 	public AlertDialog dialog;
 	
 	/**
-	 * 五子棋的行数和列数，默认为10
+	 * 五子棋的行数和列数，默认为15
 	 */
-	public static final int LINE_NUM = 20;
+	public static int mLineNum;
 	
 	/**
 	 * 当连城多少个时，可以结束游戏
@@ -97,6 +100,11 @@ public class GoBangPanel extends View{
 	 * 初始化画笔，棋子,以及所走的步子
 	 */
 	private void init() {
+		
+		//从配置文件中读取设置信息
+		SharedPreferences sp = getContext().getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
+		mLineNum = sp.getInt(LINE_NUM, 15);
+		
 		mPaint = new Paint();
 		mPaint.setAntiAlias(true);
 		mPaint.setDither(true);
@@ -118,6 +126,7 @@ public class GoBangPanel extends View{
 							dialog.dismiss();
 						}
 					})
+					.setCancelable(false)
 					.create();
 	}
 
@@ -147,7 +156,7 @@ public class GoBangPanel extends View{
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		PANEL_WIDTH = w;
 		
-		LINE_WIDTH = PANEL_WIDTH * 1.0f / LINE_NUM;
+		LINE_WIDTH = PANEL_WIDTH * 1.0f / mLineNum;
 		
 		int width = (int) (LINE_WIDTH * mRatioOfPieceToSingleWidth);
 		mWhitePiece = Bitmap.createScaledBitmap(mWhitePiece, width, width, false);
@@ -239,7 +248,7 @@ public class GoBangPanel extends View{
 	 */
 	private void drawBoard(Canvas canvas) {
 		//绘制横线和纵线，两者合并在了一起
-		for(int i = 0; i < LINE_NUM; ++i){
+		for(int i = 0; i < mLineNum; ++i){
 			//计算出每行的y的位置
 			float y = i * LINE_WIDTH + LINE_WIDTH / 2;
 			float startX = LINE_WIDTH / 2;
