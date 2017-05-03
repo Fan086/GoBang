@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.fndroid.gobang.MainActivity" >
+
+    <com.fndroid.gobang.GoBangPanel
+        android:id="@+id/panel_gobang"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+         />
+	<Button
+	    android:id="@+id/btn_restart"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="再来一局"
+	    />
+	<Button
+	    android:id="@+id/btn_regret"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="悔棋"
+	    />
+</LinearLayout>
