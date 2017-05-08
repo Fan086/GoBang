@@ -27,6 +27,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 public abstract class BaseGoBangPanel extends View{
+	enum Type{
+		HUMAN2HUMAN, HUMAN2COMPUTER
+	}
 	
 	/**
 	 * 结束提示框

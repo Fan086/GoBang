@@ -3,6 +3,10 @@ package com.fndroid.gobang.utils;
 import java.util.LinkedList;
 
 import com.fndroid.gobang.panel.BaseGoBangPanel;
+import com.fndroid.gobang.panel.GoBangPanel;
+import com.fndroid.gobang.panel.SmartGoBangPanel;
+import com.fndroid.gobang.player.Computer;
+import com.fndroid.gobang.player.Player;
 
 import android.app.AlertDialog;
 import android.graphics.Point;
@@ -18,17 +22,31 @@ public class GoBangUtils {
 	 * 再来一局
 	 */
 	public static void restart(BaseGoBangPanel panel){
+		
+		panel.mIsGameOver = false;
+		
 		LinkedList<Point> blackSteps = panel.blackPlayer.getSteps();
 		LinkedList<Point> whiteSteps = panel.whitePlayer.getSteps();
 		
 		blackSteps.clear();
 		whiteSteps.clear();
 		
-		panel.mIsGameOver = false;
-		
-		panel.invalidate();
-		
-		panel.mIsWhiteGo = true;
+		if(panel instanceof GoBangPanel){
+			
+			panel.mIsWhiteGo = true;
+			panel.invalidate();
+		//当处于人机对战的情况下，如果电脑先手，则让它重新落子，否则，将栈清空，并重新绘制界面	
+		}else if(panel instanceof SmartGoBangPanel){
+			SmartGoBangPanel smartPanel = (SmartGoBangPanel)panel;
+			
+			if(!smartPanel.isHumanFirst){
+				smartPanel.isHumanGo = false;
+				Computer computer = (Computer) smartPanel.whitePlayer;
+				computer.goPiece();
+			}else{
+				panel.invalidate();
+			}
+		}
 	}
 	
 	/**
@@ -38,13 +56,31 @@ public class GoBangUtils {
 		LinkedList<Point> whiteSteps = panel.whitePlayer.getSteps();
 		LinkedList<Point> blackSteps = panel.blackPlayer.getSteps();
 		
-		if(whiteSteps.isEmpty() && blackSteps.isEmpty()){
-			return;
-		}
-		//当游戏还没结束时，可以悔棋
+		//当游戏已经结束后点击悔棋时，需要将标志位取false，
+		//并且对于人机模式，要根据人类的先后手顺序，进行特殊处理（胜利时，玩家会多走一步棋）
 		if(panel.mIsGameOver){
+			
 			panel.mIsGameOver = false;
+			
+			if(panel instanceof SmartGoBangPanel){
+				SmartGoBangPanel smartPanel = (SmartGoBangPanel) panel;
+				if(smartPanel.isHumanFirst){
+					whiteSteps.pop();
+				}else{
+					blackSteps.pop();
+				}
+				
+				smartPanel.invalidate();
+				
+				return;
+			}
 		}
+		//双人游戏的悔棋规则：每人悔一步
+		if(panel instanceof GoBangPanel){
+			
+			if(whiteSteps.isEmpty() && blackSteps.isEmpty()){
+				return;
+			}
 			//回退到上一个下子的一方
 			panel.mIsWhiteGo = !panel.mIsWhiteGo;
 			if(panel.mIsWhiteGo){
@@ -52,9 +88,24 @@ public class GoBangUtils {
 			}else{
 				blackSteps.pop();
 			}
+		//人机对战的悔棋规则：悔到玩家下子的那一步，当先手是电脑时，即白子是电脑时，留下电脑下的那颗棋子
+		}else if(panel instanceof SmartGoBangPanel){
+			SmartGoBangPanel smartPanel = (SmartGoBangPanel) panel;
 			
-			panel.invalidate();
-//		}
+			//当电脑先手时，只剩一颗子的情况下无法悔棋；当玩家先手时，棋盘上没有子时，无法悔棋
+			if((!smartPanel.isHumanFirst && whiteSteps.size() == 1) ||
+					(smartPanel.isHumanFirst && whiteSteps.isEmpty() && blackSteps.isEmpty())
+					){
+				return;
+			}
+			blackSteps.pop();
+			whiteSteps.pop();
+			
+			//悔棋之后，总是轮到用户先下棋
+			smartPanel.isHumanGo = true;
+		}
+		
+		panel.invalidate();
 	}
 	
 	/**
@@ -178,7 +229,7 @@ public class GoBangUtils {
 			}
 		}
 		
-		if(cnt == BaseGoBangPanel.MAX_PIECES){
+		if(cnt >= BaseGoBangPanel.MAX_PIECES){
 			return true;
 		}
 		

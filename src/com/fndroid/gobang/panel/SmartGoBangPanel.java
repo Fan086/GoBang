@@ -25,7 +25,7 @@ public class SmartGoBangPanel extends BaseGoBangPanel {
 	/**
 	 * 判断是否是用户先手
 	 */
-	private boolean isHumanFirst;
+	public boolean isHumanFirst;
 	
 	public Player humanPlayer;
 	public Computer computerPlayer;
@@ -43,6 +43,14 @@ public class SmartGoBangPanel extends BaseGoBangPanel {
 		super(context, attrs, defStyleAttr);
 		
 		init();
+	}
+	
+	@Override
+	protected void init() {
+		super.init();
+		
+		SharedPreferences sp = getContext().getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
+		isHumanFirst = sp.getBoolean(HUMAN_FIRST, true);
 	}
 	
 	@Override
@@ -75,7 +83,7 @@ public class SmartGoBangPanel extends BaseGoBangPanel {
 	//相当于是用户在走棋
 	public boolean onTouchEvent(MotionEvent event) {
 		//当不是用户回合或者游戏结束时，不执行点击事件
-		if(!isHumanGo || mIsGameOver){
+		if(mIsGameOver){
 			return false;
 		}
 		int action = event.getAction();
@@ -92,22 +100,16 @@ public class SmartGoBangPanel extends BaseGoBangPanel {
 				return false;
 			}
 			
-			//哪个子走棋，则将它放入对应的集合中
-//			if(mIsWhiteGo){
-//				humanSteps.push(point);
-//			}else{
-//				computerSteps.push(point);
-//			}
+			//放入人类的落子栈中
 			humanSteps.push(point);
 			
 			
 			invalidate();
 			
 			isHumanGo = !isHumanGo;
-			//检测是否游戏结束
-//			if(GoBangUtils.isGameOver(this)){
-//				return false;
-//			};
+			//检测是否游戏结束并将结束位改变
+			GoBangUtils.isGameOver(this);
+
 			computerGo();
 			
 		}
