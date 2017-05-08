@@ -1,9 +1,16 @@
-package com.fndroid.gobang;
+package com.fndroid.gobang.panel;
+
+import static com.fndroid.gobang.utils.GoBangConstants.LINE_NUM;
+import static com.fndroid.gobang.utils.GoBangConstants.SETTINGS;
 
 import java.util.LinkedList;
 
+import com.fndroid.gobang.R;
+import com.fndroid.gobang.R.drawable;
+import com.fndroid.gobang.player.Human;
+import com.fndroid.gobang.player.Player;
 import com.fndroid.gobang.utils.GoBangUtils;
-import static com.fndroid.gobang.utils.GoBangConstants.*;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,7 +26,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class GoBangPanel extends View{
+public abstract class BaseGoBangPanel extends View{
 	
 	/**
 	 * 结束提示框
@@ -49,14 +56,9 @@ public class GoBangPanel extends View{
 	private Paint mPaint;
 	
 	/**
-	 * 棋盘是否已经绘制，当绘制完成时，之后就不再绘制棋盘
-	 */
-	private boolean mHasDrawedBoard = false;
-	
-	/**
 	 * 判断是否是白方执子，否则是黑方
 	 */
-	public boolean mIsWhiteGo;
+	public boolean mIsWhiteGo = true;
 	
 	private Bitmap mWhitePiece;
 	private Bitmap mBlackPiece;
@@ -67,28 +69,37 @@ public class GoBangPanel extends View{
 	private float mRatioOfPieceToSingleWidth = 3.0f / 4;
 	
 	/**
+	 * 白色玩家
+	 */
+	public Player whitePlayer;
+	/**
+	 * 黑色玩家
+	 */
+	public Player blackPlayer;
+	/**
 	 * 用于记录白方所走的位置
 	 */
-	public LinkedList<Point> mWhiteSteps;
+	protected LinkedList<Point> mWhiteSteps;
 	/**
 	 * 用于记录黑方所走的位置
 	 */
-	public LinkedList<Point> mBlackSteps;
+	protected LinkedList<Point> mBlackSteps;
+	
 	
 	/**
 	 * 判断游戏是否结束
 	 */
 	public boolean mIsGameOver = false;
 	
-	public GoBangPanel(Context context) {
+	public BaseGoBangPanel(Context context) {
 		this(context, null);
 	}
 	
-	public GoBangPanel(Context context, AttributeSet attrs) {
+	public BaseGoBangPanel(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 	
-	public GoBangPanel(Context context, AttributeSet attrs, int defStyleAttr) {
+	public BaseGoBangPanel(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		
 		setBackgroundColor(Color.WHITE);
@@ -99,7 +110,7 @@ public class GoBangPanel extends View{
 	/**
 	 * 初始化画笔，棋子,以及所走的步子
 	 */
-	private void init() {
+	protected void init() {
 		
 		//从配置文件中读取设置信息
 		SharedPreferences sp = getContext().getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
@@ -113,9 +124,6 @@ public class GoBangPanel extends View{
 		mWhitePiece = BitmapFactory.decodeResource(getResources(), R.drawable.stone_w2);
 		mBlackPiece = BitmapFactory.decodeResource(getResources(), R.drawable.stone_b1);
 		
-		mWhiteSteps = new LinkedList<>();
-		mBlackSteps = new LinkedList<>();
-		
 		dialog = new AlertDialog.Builder(getContext())
 					.setTitle("提示")
 					.setMessage("游戏结束")
@@ -128,6 +136,16 @@ public class GoBangPanel extends View{
 					})
 					.setCancelable(false)
 					.create();
+	}
+	
+	public void setWhitePlayer(Player whitePlayer){
+		this.whitePlayer = whitePlayer;
+		mWhiteSteps = whitePlayer.getSteps();
+	}
+	
+	public void setBlackPlayer(Player blackPlayer){
+		this.blackPlayer = blackPlayer;
+		mBlackSteps = blackPlayer.getSteps();
 	}
 
 	@Override
@@ -163,59 +181,23 @@ public class GoBangPanel extends View{
 		mBlackPiece = Bitmap.createScaledBitmap(mBlackPiece, width, width, false);
 	}
 	
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		//当游戏结束时，不执行点击事件
-		if(mIsGameOver){
-			return false;
-		}
-		int action = event.getAction();
-		//之所以用up不用down是为了当上一级控件是scrollView这样的控件时，由它来处理；否则会出现滑动时落子的情况-
-		if(action == MotionEvent.ACTION_UP){
-			
-			float x = event.getX();
-			float y = event.getY();
-			
-			Point point = getValidPoint(x, y);
-			
-			//当黑白双方的步子集合中已存在这个坐标时，本次点击事件不处理
-			if(mWhiteSteps.contains(point) || mBlackSteps.contains(point)){
-				return false;
-			}
-			
-			//哪个子走棋，则将它放入对应的集合中
-			if(mIsWhiteGo){
-				mWhiteSteps.push(point);
-			}else{
-				mBlackSteps.push(point);
-			}
-			
-			invalidate();
-			
-			//检测是否游戏结束
-			GoBangUtils.isGameOver(this);
-			
-			mIsWhiteGo = !mIsWhiteGo;
-		}
-		//这里需要返回true，即告诉父控件这块区域的点击事件由我处理。这样才可获得ACTION_UP
-		return true;
-	}
 	
-	private Point getValidPoint(float x, float y) {
+	
+	protected Point getValidPoint(float x, float y) {
 		return new Point((int)(x / LINE_WIDTH), (int)(y / LINE_WIDTH));
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-//		if(!mHasDrawedBoard){
-//			drawBoard(canvas);
-//		}
-		
+
 		drawBoard(canvas);
 		drawPieces(canvas);
 	}
 	
-	private void drawPieces(Canvas canvas) {
+	protected void drawPieces(Canvas canvas) {
+		if(whitePlayer == null || blackPlayer == null){
+			throw new RuntimeException("player has not set, please call setWhitePlayer and setBlackPlayer before call this method");
+		}
 		//绘制白棋
 		for(int i = 0; i < mWhiteSteps.size(); ++i){
 			Point point = mWhiteSteps.get(i);
@@ -257,28 +239,7 @@ public class GoBangPanel extends View{
 			
 			canvas.drawLine(y, startX, y, stopX, mPaint);
 		}
-		//TODO:将划线生成的背景保存成图片
-//		Drawable drawable = canvas.
-//		Bitmap backgroundBitmap = getDrawingCache(true);
-//		Drawable background = new BitmapDrawable(getResources(), backgroundBitmap);
-//		setBackground(background);
-//		mHasDrawedBoard = true;
+
 	}
 	
-//	@Override
-//	protected Parcelable onSaveInstanceState() {
-//		Bundle bundle = new Bundle();
-//		bundle.putBoolean("isGameOver", mIsGameOver);
-//		bundle.putSerializable("whiteSteps", mWhiteSteps);
-//		bundle.putSerializable("blackSteps", mBlackSteps);
-//		return bundle;
-//	}
-//	
-//	@Override
-//	protected void onRestoreInstanceState(Parcelable state) {
-//		if(state instanceof Bundle){
-//			System.out.println("onRestore");
-//		}
-//		super.onRestoreInstanceState(state);
-//	}
 }

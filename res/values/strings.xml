@@ -7,5 +7,6 @@
     <string name="game_title">五&#160;子&#160;棋&#160;大&#160;战</string>
     <string name="double_battle">双人对战</string>
     <string name="game_setting">设&#160;&#160;置</string>
+    <string name="human_computer_battle">人机对战</string>
 
 </resources>

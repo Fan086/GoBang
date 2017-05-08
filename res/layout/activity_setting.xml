@@ -14,6 +14,7 @@
 	    android:text="游戏设置"/>
 
 	<RelativeLayout
+	    android:id="@+id/rl_setting_line_num"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@+id/tv_game_settings"
@@ -58,6 +59,48 @@
 	            android:background="@null"
 	            android:src="@drawable/plus" />
 	    </LinearLayout>
+	</RelativeLayout>
+	<RelativeLayout
+	    android:id="@+id/rl_setting_human_piece_color"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/rl_setting_line_num"
+	    android:layout_marginTop="100dp" >
+
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
+	        android:text="玩家落子顺序："
+	        android:textSize="50sp" />
+
+	    <RadioGroup
+	        android:id="@+id/rg_human_piece_order"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        android:orientation="horizontal" >
+			<RadioButton
+			    android:id="@+id/rb_human_first"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:checked="true"
+			    android:button="@null"
+			    android:drawableRight="@android:drawable/btn_radio"
+			    android:textSize="50sp"
+			    android:text="先手："/>
+			<RadioButton 
+			    android:id="@+id/rb_human_second"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:button="@null"
+			    android:drawableRight="@android:drawable/btn_radio"
+			    android:textSize="50sp"
+			    android:text="后手："/>
+	        
+	    </RadioGroup>
 	</RelativeLayout>
 	<Button
 	    android:id="@+id/btn_setting_confirm"

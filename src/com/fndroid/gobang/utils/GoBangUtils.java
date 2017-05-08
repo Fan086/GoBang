@@ -2,16 +2,14 @@ package com.fndroid.gobang.utils;
 
 import java.util.LinkedList;
 
-import com.fndroid.gobang.GoBangPanel;
+import com.fndroid.gobang.panel.BaseGoBangPanel;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.graphics.Point;
-import android.widget.Toast;
 
 
 public class GoBangUtils {
-	
+
 	//四个方向的常量
 	enum Orientation{
 		HORIZONTAL, VERTICAL, LEFT_DIAGONAL, RIGHT_DIAGONAL
@@ -19,9 +17,9 @@ public class GoBangUtils {
 	/**
 	 * 再来一局
 	 */
-	public static void restart(GoBangPanel panel){
-		LinkedList<Point> blackSteps = panel.mBlackSteps;
-		LinkedList<Point> whiteSteps = panel.mWhiteSteps;
+	public static void restart(BaseGoBangPanel panel){
+		LinkedList<Point> blackSteps = panel.blackPlayer.getSteps();
+		LinkedList<Point> whiteSteps = panel.whitePlayer.getSteps();
 		
 		blackSteps.clear();
 		whiteSteps.clear();
@@ -36,9 +34,9 @@ public class GoBangUtils {
 	/**
 	 * 悔棋的操作
 	 */
-	public static void regret(GoBangPanel panel){
-		LinkedList<Point> whiteSteps = panel.mWhiteSteps;
-		LinkedList<Point> blackSteps = panel.mBlackSteps;
+	public static void regret(BaseGoBangPanel panel){
+		LinkedList<Point> whiteSteps = panel.whitePlayer.getSteps();
+		LinkedList<Point> blackSteps = panel.blackPlayer.getSteps();
 		
 		if(whiteSteps.isEmpty() && blackSteps.isEmpty()){
 			return;
@@ -63,12 +61,12 @@ public class GoBangUtils {
 	 * 判断是否游戏结束
 	 * @return true表示游戏结束
 	 */
-	public static boolean isGameOver(GoBangPanel panel){
+	public static boolean isGameOver(BaseGoBangPanel panel){
 		AlertDialog dialog = panel.dialog;
 		
 		//检测是否白棋获胜，或者黑棋获胜，或者和棋，当满足条件时，游戏结束
-		boolean isWhiteWin = checkIsInLine(panel.mWhiteSteps);
-		boolean isBlackWin = checkIsInLine(panel.mBlackSteps);
+		boolean isWhiteWin = checkIsInLine(panel.whitePlayer.getSteps());
+		boolean isBlackWin = checkIsInLine(panel.blackPlayer.getSteps());
 		boolean isDoubleWin = checkIsDoubleWin(panel);
 		if(isWhiteWin){
 			panel.mIsGameOver = true;
@@ -93,11 +91,11 @@ public class GoBangUtils {
 	 * 检测是否是平局,当所有落子点都被下完还没有胜负时，判断为平局
 	 * @return true表示是
 	 */
-	private static boolean checkIsDoubleWin(GoBangPanel panel) {
-		int lineNum = GoBangPanel.mLineNum;
+	private static boolean checkIsDoubleWin(BaseGoBangPanel panel) {
+		int lineNum = BaseGoBangPanel.mLineNum;
 		int allUnit = lineNum * lineNum;
-		LinkedList<Point> mBlackSteps = panel.mBlackSteps;
-		LinkedList<Point> mWhiteSteps = panel.mWhiteSteps;
+		LinkedList<Point> mBlackSteps = panel.blackPlayer.getSteps();
+		LinkedList<Point> mWhiteSteps = panel.whitePlayer.getSteps();
 		return mBlackSteps.size() + mWhiteSteps.size() == allUnit;
 	}
 
@@ -128,7 +126,7 @@ public class GoBangUtils {
 		
 		Point tmpPoint = new Point();
 		//上半部分
-		for(int i = 1; i < GoBangPanel.MAX_PIECES; ++i){
+		for(int i = 1; i < BaseGoBangPanel.MAX_PIECES; ++i){
 			
 			//根据方向来取不同的坐标点
 			switch(orientation){
@@ -154,7 +152,7 @@ public class GoBangUtils {
 			}
 		}
 		//下半部分
-		for(int i = 1; i < GoBangPanel.MAX_PIECES; ++i){
+		for(int i = 1; i < BaseGoBangPanel.MAX_PIECES; ++i){
 			
 			//根据方向来取不同的坐标点
 			switch(orientation){
@@ -180,7 +178,7 @@ public class GoBangUtils {
 			}
 		}
 		
-		if(cnt == GoBangPanel.MAX_PIECES){
+		if(cnt == BaseGoBangPanel.MAX_PIECES){
 			return true;
 		}
 		

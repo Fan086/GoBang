@@ -1,12 +1,14 @@
 package com.fndroid.gobang;
 
+import com.fndroid.gobang.panel.GoBangPanel;
+import com.fndroid.gobang.player.Human;
+import com.fndroid.gobang.player.Player;
 import com.fndroid.gobang.utils.GoBangUtils;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
 
 public class PanelActivity extends Activity implements OnClickListener {
 	GoBangPanel panel;
@@ -16,6 +18,12 @@ public class PanelActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_panel);
 		
 		panel = (GoBangPanel) findViewById(R.id.panel_gobang);
+		
+		Player whitePlayer = new Human(panel, true);
+		Player blackPlayer = new Human(panel, false);
+		
+		panel.setWhitePlayer(whitePlayer);
+		panel.setBlackPlayer(blackPlayer);
 		
 		findViewById(R.id.btn_restart).setOnClickListener(this);
 		findViewById(R.id.btn_regret).setOnClickListener(this);

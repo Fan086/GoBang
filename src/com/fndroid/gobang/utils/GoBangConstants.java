@@ -10,4 +10,9 @@ public final class GoBangConstants {
 	 * 存储行数与列数
 	 */
 	public static final String LINE_NUM = "line_num";
+	
+	/**
+	 * 存储玩家颜色，即落子顺序
+	 */
+	public static final String HUMAN_FIRST = "human_white";
 }
