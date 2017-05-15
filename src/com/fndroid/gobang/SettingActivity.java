@@ -26,12 +26,18 @@ public class SettingActivity extends Activity implements OnClickListener{
 		setContentView(R.layout.activity_setting);
 		
 		sp = getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
+		boolean isHumanFirst = sp.getBoolean(HUMAN_FIRST, true);
 		
 		findViewById(R.id.btn_minus).setOnClickListener(this);
 		findViewById(R.id.btn_plus).setOnClickListener(this);
 		findViewById(R.id.btn_setting_confirm).setOnClickListener(this);
 		
 		rg_human_piece_color = (RadioGroup) findViewById(R.id.rg_human_piece_order);
+		if(isHumanFirst){
+			rg_human_piece_color.check(R.id.rb_human_first);
+		}else{
+			rg_human_piece_color.check(R.id.rb_human_second);
+		}
 		
 		tv_line_num = (TextView) findViewById(R.id.tv_line_num);
 		tv_line_num.setText(sp.getInt(LINE_NUM, 15) + "");

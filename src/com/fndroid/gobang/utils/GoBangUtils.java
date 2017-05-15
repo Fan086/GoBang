@@ -7,17 +7,15 @@ import com.fndroid.gobang.panel.GoBangPanel;
 import com.fndroid.gobang.panel.SmartGoBangPanel;
 import com.fndroid.gobang.player.Computer;
 import com.fndroid.gobang.player.Player;
-
+import static com.fndroid.gobang.utils.Orientation.*;
 import android.app.AlertDialog;
 import android.graphics.Point;
 
 
 public class GoBangUtils {
-
-	//四个方向的常量
-	enum Orientation{
-		HORIZONTAL, VERTICAL, LEFT_DIAGONAL, RIGHT_DIAGONAL
-	}
+	private static boolean isWhiteWin;
+	private static boolean isBlackWin;
+	private static boolean isDoubleWin;
 	/**
 	 * 再来一局
 	 */
@@ -64,10 +62,11 @@ public class GoBangUtils {
 			
 			if(panel instanceof SmartGoBangPanel){
 				SmartGoBangPanel smartPanel = (SmartGoBangPanel) panel;
-				if(smartPanel.isHumanFirst){
+				if(isWhiteWin){
 					whiteSteps.pop();
-				}else{
+				}else if(isBlackWin){
 					blackSteps.pop();
+					whiteSteps.pop();
 				}
 				
 				smartPanel.invalidate();
@@ -116,9 +115,9 @@ public class GoBangUtils {
 		AlertDialog dialog = panel.dialog;
 		
 		//检测是否白棋获胜，或者黑棋获胜，或者和棋，当满足条件时，游戏结束
-		boolean isWhiteWin = checkIsInLine(panel.whitePlayer.getSteps());
-		boolean isBlackWin = checkIsInLine(panel.blackPlayer.getSteps());
-		boolean isDoubleWin = checkIsDoubleWin(panel);
+		isWhiteWin = checkIsInLine(panel.whitePlayer.getSteps());
+		isBlackWin = checkIsInLine(panel.blackPlayer.getSteps());
+		isDoubleWin = checkIsDoubleWin(panel);
 		if(isWhiteWin){
 			panel.mIsGameOver = true;
 			dialog.setMessage("白棋获胜，游戏结束");
@@ -143,7 +142,7 @@ public class GoBangUtils {
 	 * @return true表示是
 	 */
 	private static boolean checkIsDoubleWin(BaseGoBangPanel panel) {
-		int lineNum = BaseGoBangPanel.mLineNum;
+		int lineNum = BaseGoBangPanel.getLineNum();
 		int allUnit = lineNum * lineNum;
 		LinkedList<Point> mBlackSteps = panel.blackPlayer.getSteps();
 		LinkedList<Point> mWhiteSteps = panel.whitePlayer.getSteps();
@@ -158,10 +157,10 @@ public class GoBangUtils {
 		if(point == null){
 			return false;
 		}
-		boolean isHorizontalInLine = checkIsInLineByOrientation(point, points, Orientation.HORIZONTAL);
-		boolean isVerticalInLine = checkIsInLineByOrientation(point, points, Orientation.VERTICAL);
-		boolean isLeftDiagonalInLine = checkIsInLineByOrientation(point, points, Orientation.LEFT_DIAGONAL);
-		boolean isRightDiagonalInLine = checkIsInLineByOrientation(point, points, Orientation.RIGHT_DIAGONAL);
+		boolean isHorizontalInLine = checkIsInLineByOrientation(point, points, HORIZONTAL);
+		boolean isVerticalInLine = checkIsInLineByOrientation(point, points, VERTICAL);
+		boolean isLeftDiagonalInLine = checkIsInLineByOrientation(point, points, LEFT_DIAGONAL);
+		boolean isRightDiagonalInLine = checkIsInLineByOrientation(point, points, RIGHT_DIAGONAL);
 		
 		if(isHorizontalInLine || isVerticalInLine || isLeftDiagonalInLine || isRightDiagonalInLine){
 			return true;
@@ -170,7 +169,15 @@ public class GoBangUtils {
 		return false;
 	}
 
+	/**
+	 * 根据方向，来检测所在方向上同颜色的棋子是否已经连城线
+	 * @param point 最新下的那个棋子
+	 * @param points 这个棋子的所有情况
+	 * @param orientation 方向
+	 * @return 是否已经练成线
+	 */
 	private static boolean checkIsInLineByOrientation(Point point, LinkedList<Point> points, Orientation orientation) {
+		//初值为1，代表当前已经有一个棋子
 		int cnt = 1;
 		int x = point.x;
 		int y = point.y;
@@ -234,5 +241,15 @@ public class GoBangUtils {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * 检测point是否越界
+	 * @return true代表越界了
+	 */
+	public static boolean checkIndexOutOfBoundary(Point point){
+		return point.x < 0 || point.y < 0 ||
+				point.x >= BaseGoBangPanel.getLineNum() ||
+				point.y >= BaseGoBangPanel.getLineNum();
 	}
 }

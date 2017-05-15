@@ -49,12 +49,12 @@ public abstract class BaseGoBangPanel extends View{
 	/**
 	 * 每行之间的间距
 	 */
-	private static float LINE_WIDTH; 
-
+	private float LINE_WIDTH; 
+	
 	/**
 	 * 屏幕的宽度
 	 */
-	private static int PANEL_WIDTH;
+	private int PANEL_WIDTH;
 	
 	private Paint mPaint;
 	
@@ -242,7 +242,15 @@ public abstract class BaseGoBangPanel extends View{
 			
 			canvas.drawLine(y, startX, y, stopX, mPaint);
 		}
-
 	}
+
+	/**
+	 * 获取棋盘的宽高
+	 * @return 棋盘的宽高
+	 */
+	public static int getLineNum() {
+		return mLineNum;
+	}
+	
 	
 }

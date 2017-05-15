@@ -14,5 +14,5 @@ public final class GoBangConstants {
 	/**
 	 * 存储玩家颜色，即落子顺序
 	 */
-	public static final String HUMAN_FIRST = "human_white";
+	public static final String HUMAN_FIRST = "human_first";
 }

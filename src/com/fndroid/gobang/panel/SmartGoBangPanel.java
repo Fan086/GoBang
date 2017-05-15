@@ -17,7 +17,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 public class SmartGoBangPanel extends BaseGoBangPanel {
-	
+
 	/**
 	 * 判断是否是用户回合
 	 */

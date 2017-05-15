@@ -26,7 +26,7 @@ public class Computer4GoBang {
 	public boolean goPiece(){
 		//先获得一个随机下棋的电脑
 		//获得棋盘的行数与列数
-		int lineNum = BaseGoBangPanel.mLineNum;
+		int lineNum = panel.getLineNum();
 		
 		int x = random.nextInt(lineNum);
 		int y = random.nextInt(lineNum);
