@@ -6,6 +6,7 @@ import static com.fndroid.gobang.utils.GoBangConstants.SETTINGS;
 import com.fndroid.gobang.panel.BaseGoBangPanel;
 import com.fndroid.gobang.panel.SmartGoBangPanel;
 import com.fndroid.gobang.player.Computer;
+import com.fndroid.gobang.player.ComputerThread;
 import com.fndroid.gobang.player.Human;
 import com.fndroid.gobang.player.Player;
 import com.fndroid.gobang.utils.GoBangUtils;
@@ -40,6 +41,9 @@ public class SmartPanelActivity extends Activity implements OnClickListener{
 		
 		findViewById(R.id.btn_smart_restart).setOnClickListener(this);
 		findViewById(R.id.btn_smart_regret).setOnClickListener(this);
+		
+		//开启电脑线程
+		new ComputerThread(computerPlayer).start();
 	}
 	@Override
 	public void onClick(View v) {

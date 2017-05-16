@@ -9,11 +9,13 @@ import com.fndroid.gobang.utils.GoBangUtils;
 import com.fndroid.gobang.utils.Orientation;
 import static com.fndroid.gobang.utils.Orientation.*;
 import android.graphics.Point;
+import android.os.SystemClock;
 
 public class Computer extends Player{
 	private Random random;
 	private SmartGoBangPanel panel;
 	private Brain brain;
+//	private Thread goPieceThread;
 	
 	public Computer(BaseGoBangPanel panel,boolean colorFlag){
 		this("默认电脑", panel ,colorFlag);
@@ -35,10 +37,13 @@ public class Computer extends Player{
 	 * 当电脑出现单独一个子的时候，下在那个子的四周
 	 * 当没有下子的时候，把子落在棋盘的中间区域
 	 */
-	public void goPiece(){
+	public synchronized void goPiece(){
 		if(panel.isHumanGo || panel.mIsGameOver){
 			return;
 		}
+		
+//		SystemClock.sleep(1000);
+		
 		LinkedList<Point> humanSteps = panel.humanSteps;
 		LinkedList<Point> computerSteps = panel.computerSteps;
 		
@@ -46,72 +51,66 @@ public class Computer extends Player{
 		//传入自己，代表先进攻，传入人类，代表后防守
 		//检测电脑冲5的情况
 		if(brain.checkGotoFiveInLine(this)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 		//检测人类冲5的情况
 		}else if(brain.checkGotoFiveInLine(panel.humanPlayer)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 		//检测电脑活3的情况
 		}else if(brain.checkComputerLiveThree(this)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 		//检测电脑活201的情况，在只考虑一步的情况下，与半活的201没什么区别，不考虑放两边的情况
 		}else if(brain.checkComputerLiveTwoOne(this)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 			
 		//检测人类活三的情况
 		}else if(brain.checkHumanLiveThree((Human) panel.humanPlayer)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 		//检测人类活201的情况
 		}else if(brain.checkHumanLiveTwoOne((Human) panel.humanPlayer)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 			
 		//检测电脑半活三的情况，可以用来冲4
 		}else if(brain.checkComputerHalfLiveThree(this)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 			//检测电脑半活201的情况，可以用来冲4
 		}else if(brain.checkComputerHalfLiveTwoOne(this)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 		//检测电脑活二的情况
 		}else if(brain.checkComputerLiveTwo(this)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 			//检测电脑活101的情况,如果有，则将棋子放入中间
 		}else if(brain.checkComputerLiveOneOne(this)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 		}else if(brain.checkComputerLiveOne(this)){
-			panel.isHumanGo = !panel.isHumanGo;
-			GoBangUtils.isGameOver(panel);
-			panel.invalidate();
+			checkOverAndUpdateUI();
 		}else{
 			point = brain.centerBlockGo();
 			System.out.println("没有发现四连，随机走子" + point);
 			if(!humanSteps.contains(point) && !computerSteps.contains(point)){
 				computerSteps.push(point);
-				panel.isHumanGo = !panel.isHumanGo;
-				GoBangUtils.isGameOver(panel);
-				panel.invalidate();
+				checkOverAndUpdateUI();
 			}else{
 				goPiece();
 			}
 		}
+		
+		//让所在线程进入等待状态，等待用户下完棋之后唤醒
+		try {
+			wait();
+			
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	private void checkOverAndUpdateUI() {
+		panel.isHumanGo = !panel.isHumanGo;
+		GoBangUtils.isGameOver(panel);
+		panel.post(new Runnable(){
+			@Override
+			public void run() {
+				panel.invalidate();
+			}
+		});
 	}
 	
 	public void goPiece2(){
@@ -136,7 +135,7 @@ public class Computer extends Player{
 			goPiece();
 		}
 	}
-	
+
 	private class Brain{
 		
 		
@@ -161,6 +160,7 @@ public class Computer extends Player{
 		public boolean checkComputerPosibleToFive(Point point, Orientation orientation){
 			LinkedList<Point> humanSteps = panel.humanSteps;
 			LinkedList<Point> computerSteps = panel.computerSteps;
+			
 			//用于记录当前棋子指定方向成为五连的可能性
 			int potential = 1;
 			int x = point.x;
@@ -169,54 +169,103 @@ public class Computer extends Player{
 			Point tmpPoint = new Point();
 			
 			//从左边开始计数
-			for(int i = 2; i > 0; --i){
-				switch(orientation){
-				case HORIZONTAL:
-					tmpPoint.set(x - i, y);
-					break;
-				case VERTICAL:
-					tmpPoint.set(x, y - i);
-					break;
-				case LEFT_DIAGONAL:
-					tmpPoint.set(x - i, y - i);
-					break;
-				case RIGHT_DIAGONAL:
-					tmpPoint.set(x + i, y - i);
-					break;
+
+			switch(orientation){
+			case HORIZONTAL:
+				for(int i = x - 1; i >= 0; --i){
+					tmpPoint.set(i, y);
+					
+					if(humanSteps.contains(tmpPoint)){
+						break;
+					}else{
+						++potential;
+					}
 				}
-				
-				if(GoBangUtils.checkIndexOutOfBoundary(tmpPoint) || humanSteps.contains(tmpPoint)){
-					return false;
-				}else{
-					++potential;
+				break;
+			case VERTICAL:
+				for(int j = y - 1; j >= 0; --j){
+					tmpPoint.set(x, j);
+					
+					if(humanSteps.contains(tmpPoint)){
+						break;
+					}else{
+						++potential;
+					}
 				}
+				break;
+			case LEFT_DIAGONAL:
+				for(int i = x - 1,j = y - 1; i >= 0 && j >= 0; --i, --j){
+					tmpPoint.set(i, j);
+					
+					if(humanSteps.contains(tmpPoint)){
+						break;
+					}else{
+						++potential;
+					}
+				}
+				break;
+			case RIGHT_DIAGONAL:
+				for(int i = x + 1,j = y - 1; i < BaseGoBangPanel.getLineNum() && j >= 0; ++i, --j){
+					tmpPoint.set(i, j);
+					
+					if(humanSteps.contains(tmpPoint)){
+						break;
+					}else{
+						++potential;
+					}
+				}
+				break;
 			}
 			
 			//在从右边数
-			for(int i = 1; i <= 2; ++i){
-				switch(orientation){
-				case HORIZONTAL:
-					tmpPoint.set(x + i, y);
-					break;
-				case VERTICAL:
-					tmpPoint.set(x, y + i);
-					break;
-				case LEFT_DIAGONAL:
-					tmpPoint.set(x + i, y + i);
-					break;
-				case RIGHT_DIAGONAL:
-					tmpPoint.set(x - i, y + i);
-					break;
+			switch(orientation){
+			case HORIZONTAL:
+				for(int i = x + 1; i < BaseGoBangPanel.getLineNum(); ++i){
+					tmpPoint.set(i, y);
+					
+					if(humanSteps.contains(tmpPoint)){
+						break;
+					}else{
+						++potential;
+					}
 				}
-				
-				if(GoBangUtils.checkIndexOutOfBoundary(tmpPoint) || humanSteps.contains(tmpPoint)){
-					return false;
-				}else{
-					++potential;
+				break;
+			case VERTICAL:
+				for(int j = y + 1; j < BaseGoBangPanel.getLineNum(); ++j){
+					tmpPoint.set(x, j);
+					
+					if(humanSteps.contains(tmpPoint)){
+						break;
+					}else{
+						++potential;
+					}
 				}
+				break;
+			case LEFT_DIAGONAL:
+				for(int i = x + 1,j = y + 1; i < BaseGoBangPanel.getLineNum() && j < BaseGoBangPanel.getLineNum(); ++i, ++j){
+					tmpPoint.set(i, j);
+					
+					if(humanSteps.contains(tmpPoint)){
+						break;
+					}else{
+						++potential;
+					}
+				}
+				break;
+			case RIGHT_DIAGONAL:
+				for(int i = x - 1,j = y + 1; i >= 0 && j < BaseGoBangPanel.getLineNum(); --i, ++j){
+					tmpPoint.set(i, j);
+					
+					if(humanSteps.contains(tmpPoint)){
+						break;
+					}else{
+						++potential;
+					}
+				}
+				break;
 			}
 			
-			if(potential == 5){
+			if(potential >= 5){
 				return true;
 			}
 			return false;
@@ -1865,8 +1914,8 @@ public class Computer extends Player{
 			Point centerPoint = new Point(lineNum / 2, lineNum / 2);
 //			centerPoint.
 			//向中心的周围两格区域内随机取子，避免它取特别偏的位置
-			int offsetX = random.nextInt(4);
-			int offsetY = random.nextInt(4);
+			int offsetX = random.nextInt(3);
+			int offsetY = random.nextInt(3);
 			//true代表取正数，false代表取负数
 			boolean isPositiveNumX = random.nextBoolean();
 			boolean isPositiveNumY = random.nextBoolean();

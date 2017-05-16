@@ -83,12 +83,12 @@ public class SmartGoBangPanel extends BaseGoBangPanel {
 	//相当于是用户在走棋
 	public boolean onTouchEvent(MotionEvent event) {
 		//当不是用户回合或者游戏结束时，不执行点击事件
-		if(mIsGameOver){
+		if(!isHumanGo || mIsGameOver){
 			return false;
 		}
 		int action = event.getAction();
 		//之所以用up不用down是为了当上一级控件是scrollView这样的控件时，由它来处理；否则会出现滑动时落子的情况-
-		if(action == MotionEvent.ACTION_DOWN){
+		if(action == MotionEvent.ACTION_UP){
 			
 			float x = event.getX();
 			float y = event.getY();
@@ -106,7 +106,7 @@ public class SmartGoBangPanel extends BaseGoBangPanel {
 			
 			invalidate();
 			
-			isHumanGo = !isHumanGo;
+			isHumanGo = false;
 			//检测是否游戏结束并将结束位改变
 			GoBangUtils.isGameOver(this);
 
@@ -120,7 +120,10 @@ public class SmartGoBangPanel extends BaseGoBangPanel {
 	
 	
 	private void computerGo() {
-		computerPlayer.goPiece();
+		synchronized(computerPlayer){
+			computerPlayer.notify();
+		}
+//		computerPlayer.goPiece();
 	}
 	
 	

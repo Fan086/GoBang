@@ -1,21 +1,34 @@
 package com.fndroid.gobang.utils;
 
+import static com.fndroid.gobang.utils.Orientation.HORIZONTAL;
+import static com.fndroid.gobang.utils.Orientation.LEFT_DIAGONAL;
+import static com.fndroid.gobang.utils.Orientation.RIGHT_DIAGONAL;
+import static com.fndroid.gobang.utils.Orientation.VERTICAL;
+
 import java.util.LinkedList;
 
 import com.fndroid.gobang.panel.BaseGoBangPanel;
 import com.fndroid.gobang.panel.GoBangPanel;
 import com.fndroid.gobang.panel.SmartGoBangPanel;
 import com.fndroid.gobang.player.Computer;
-import com.fndroid.gobang.player.Player;
-import static com.fndroid.gobang.utils.Orientation.*;
+
 import android.app.AlertDialog;
 import android.graphics.Point;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 
 
 public class GoBangUtils {
 	private static boolean isWhiteWin;
 	private static boolean isBlackWin;
 	private static boolean isDoubleWin;
+	private static Handler handler = new Handler(Looper.getMainLooper()){
+		public void handleMessage(Message msg) {
+			AlertDialog dialog = (AlertDialog) msg.obj;
+			dialog.show();
+		};
+	};
 	/**
 	 * 再来一局
 	 */
@@ -40,13 +53,19 @@ public class GoBangUtils {
 			if(!smartPanel.isHumanFirst){
 				smartPanel.isHumanGo = false;
 				Computer computer = (Computer) smartPanel.whitePlayer;
-				computer.goPiece();
+				//TODO:觉得有问题
+				computerGo(computer);
 			}else{
 				panel.invalidate();
 			}
 		}
 	}
-	
+	private static void computerGo(Computer computer) {
+		synchronized(computer){
+			computer.notify();
+		}
+//		computerPlayer.goPiece();
+	}
 	/**
 	 * 悔棋的操作
 	 */
@@ -118,22 +137,34 @@ public class GoBangUtils {
 		isWhiteWin = checkIsInLine(panel.whitePlayer.getSteps());
 		isBlackWin = checkIsInLine(panel.blackPlayer.getSteps());
 		isDoubleWin = checkIsDoubleWin(panel);
+		
+		
 		if(isWhiteWin){
 			panel.mIsGameOver = true;
 			dialog.setMessage("白棋获胜，游戏结束");
-			dialog.show();
+			Message msg = new Message();
+			msg.obj = dialog;
+			handler.sendMessage(msg);
+//			dialog.show();
 			return true;
 		}else if(isBlackWin){
 			panel.mIsGameOver = true;
 			dialog.setMessage("黑棋获胜，游戏结束");
-			dialog.show();
+			Message msg = new Message();
+			msg.obj = dialog;
+			handler.sendMessage(msg);
+//			dialog.show();
 			return true;
 		}else if(isDoubleWin){
 			panel.mIsGameOver = true;
 			dialog.setMessage("平局，游戏结束");
-			dialog.show();
+			Message msg = new Message();
+			msg.obj = dialog;
+			handler.sendMessage(msg);
+//			dialog.show();
 			return true;
 		}
+		
 		return false;
 	}
 

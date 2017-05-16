@@ -450,11 +450,12 @@ int drawable abc_textfield_search_material 0x7f02004a
 int drawable background 0x7f02004b
 int drawable button_shape 0x7f02004c
 int drawable ic_launcher 0x7f02004d
-int drawable minus 0x7f02004e
-int drawable notification_template_icon_bg 0x7f020052
-int drawable plus 0x7f02004f
-int drawable stone_b1 0x7f020050
-int drawable stone_w2 0x7f020051
+int drawable icon 0x7f02004e
+int drawable minus 0x7f02004f
+int drawable notification_template_icon_bg 0x7f020053
+int drawable plus 0x7f020050
+int drawable stone_b1 0x7f020051
+int drawable stone_w2 0x7f020052
 int id action0 0x7f090063
 int id action_bar 0x7f090041
 int id action_bar_activity_content 0x7f090003
