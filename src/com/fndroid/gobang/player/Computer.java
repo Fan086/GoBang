@@ -41,7 +41,6 @@ public class Computer extends Player{
 		if(panel.isHumanGo || panel.mIsGameOver){
 			return;
 		}
-		
 //		SystemClock.sleep(1000);
 		
 		LinkedList<Point> humanSteps = panel.humanSteps;

@@ -15,4 +15,8 @@ public final class GoBangConstants {
 	 * 存储玩家颜色，即落子顺序
 	 */
 	public static final String HUMAN_FIRST = "human_first";
+	/**
+	 * 定义电脑下棋的时间
+	 */
+	public static final int COMPUTER_SLEEP_TIME = 1000;
 }

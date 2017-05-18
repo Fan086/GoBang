@@ -1,7 +1,6 @@
 package com.fndroid.gobang.player;
 
-import android.os.Handler;
-import android.os.Looper;
+import com.fndroid.gobang.utils.GoBangConstants;
 
 public class ComputerThread extends Thread{
 	private Computer computer;
@@ -13,7 +12,7 @@ public class ComputerThread extends Thread{
 	public void run() {
 		while(true){
 			try {
-				Thread.sleep(800);
+				Thread.sleep(GoBangConstants.COMPUTER_SLEEP_TIME);
 				computer.goPiece();
 			} catch (InterruptedException e) {
 				e.printStackTrace();

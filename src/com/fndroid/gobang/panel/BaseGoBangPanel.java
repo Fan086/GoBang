@@ -65,6 +65,7 @@ public abstract class BaseGoBangPanel extends View{
 	
 	private Bitmap mWhitePiece;
 	private Bitmap mBlackPiece;
+	private Bitmap mFocusImg;
 	
 	/**
 	 * 棋子占每一格的比例，默认为3/4
@@ -126,6 +127,7 @@ public abstract class BaseGoBangPanel extends View{
 		
 		mWhitePiece = BitmapFactory.decodeResource(getResources(), R.drawable.stone_w2);
 		mBlackPiece = BitmapFactory.decodeResource(getResources(), R.drawable.stone_b1);
+		mFocusImg = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
 		
 		dialog = new AlertDialog.Builder(getContext())
 					.setTitle("提示")
@@ -182,6 +184,7 @@ public abstract class BaseGoBangPanel extends View{
 		int width = (int) (LINE_WIDTH * mRatioOfPieceToSingleWidth);
 		mWhitePiece = Bitmap.createScaledBitmap(mWhitePiece, width, width, false);
 		mBlackPiece = Bitmap.createScaledBitmap(mBlackPiece, width, width, false);
+		mFocusImg = Bitmap.createScaledBitmap(mFocusImg, width, width, false);
 	}
 	
 	
@@ -195,8 +198,37 @@ public abstract class BaseGoBangPanel extends View{
 
 		drawBoard(canvas);
 		drawPieces(canvas);
+		drawFocus(canvas);
 	}
 	
+	/**
+	 * TODO:想到这么一条特点，刚下的那一方的棋子数会比另一方多一
+	 */
+	private void drawFocus(Canvas canvas) {
+		if(mWhiteSteps.size() > 0){
+			Point whitePoint = mWhiteSteps.peek();
+			int x = whitePoint.x;
+			int y = whitePoint.y;
+			
+			float left = x * LINE_WIDTH + LINE_WIDTH / 8;
+			float top = y * LINE_WIDTH + LINE_WIDTH / 8;
+			
+			canvas.drawBitmap(mFocusImg, left, top, mPaint);
+		}
+		
+		if(mBlackSteps.size() > 0){
+			Point blackPoint = mBlackSteps.peek();
+			int x = blackPoint.x;
+			int y = blackPoint.y;
+			
+			float left = x * LINE_WIDTH + LINE_WIDTH / 8;
+			float top = y * LINE_WIDTH + LINE_WIDTH / 8;
+			
+			canvas.drawBitmap(mFocusImg, left, top, mPaint);
+		}
+		
+	}
+
 	protected void drawPieces(Canvas canvas) {
 		if(whitePlayer == null || blackPlayer == null){
 			throw new RuntimeException("player has not set, please call setWhitePlayer and setBlackPlayer before call this method");

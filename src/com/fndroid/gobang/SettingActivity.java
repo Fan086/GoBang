@@ -26,7 +26,7 @@ public class SettingActivity extends Activity implements OnClickListener{
 		setContentView(R.layout.activity_setting);
 		
 		sp = getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
-		boolean isHumanFirst = sp.getBoolean(HUMAN_FIRST, true);
+		boolean isHumanFirst = sp.getBoolean(HUMAN_FIRST, false);
 		
 		findViewById(R.id.btn_minus).setOnClickListener(this);
 		findViewById(R.id.btn_plus).setOnClickListener(this);

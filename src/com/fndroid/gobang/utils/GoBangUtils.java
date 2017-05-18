@@ -56,6 +56,7 @@ public class GoBangUtils {
 				//TODO:觉得有问题
 				computerGo(computer);
 			}else{
+				smartPanel.isHumanGo = true;
 				panel.invalidate();
 			}
 		}
