@@ -1,5 +1,6 @@
 package com.fndroid.gobang.player;
 
+import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -15,7 +16,11 @@ public class Computer extends Player{
 	private Random random;
 	private SmartGoBangPanel panel;
 	private Brain brain;
-//	private Thread goPieceThread;
+	/**
+	 * 递归次数
+	 */
+	private int recursionTime;
+	
 	
 	public Computer(BaseGoBangPanel panel,boolean colorFlag){
 		this("默认电脑", panel ,colorFlag);
@@ -37,7 +42,7 @@ public class Computer extends Player{
 	 * 当电脑出现单独一个子的时候，下在那个子的四周
 	 * 当没有下子的时候，把子落在棋盘的中间区域
 	 */
-	public synchronized void goPiece(){
+	public synchronized void goPiece() throws ConcurrentModificationException, StackOverflowError{
 		if(panel.isHumanGo || panel.mIsGameOver){
 			return;
 		}
@@ -80,16 +85,32 @@ public class Computer extends Player{
 			//检测电脑活101的情况,如果有，则将棋子放入中间
 		}else if(brain.checkComputerLiveOneOne(this)){
 			checkOverAndUpdateUI();
+			//检测电脑活1的情况
 		}else if(brain.checkComputerLiveOne(this)){
 			checkOverAndUpdateUI();
-		}else{
+		//中间区域随机落子
+		}else if(recursionTime < 15){
 			point = brain.centerBlockGo();
-			System.out.println("没有发现四连，随机走子" + point);
 			if(!humanSteps.contains(point) && !computerSteps.contains(point)){
+				System.out.println("在中间区域落子" + point);
+				computerSteps.push(point);
+				checkOverAndUpdateUI();
+			}else{
+				++recursionTime;
+				goPiece();
+				//这里必须要加return，否则当进入这里的时候，代表发生了递归，如果没有return，则即使notify了这一次，上一次的调用还是会锁住（进入wait）
+				return;
+			}
+		//随机落子
+		}else{
+			point = brain.randomGo();
+			if(!humanSteps.contains(point) && !computerSteps.contains(point)){
+				System.out.println("随机落子" + point);
 				computerSteps.push(point);
 				checkOverAndUpdateUI();
 			}else{
 				goPiece();
+				return;
 			}
 		}
 		
@@ -102,6 +123,7 @@ public class Computer extends Player{
 		}
 	}
 	private void checkOverAndUpdateUI() {
+		recursionTime = 0;
 		panel.isHumanGo = !panel.isHumanGo;
 		GoBangUtils.isGameOver(panel);
 		panel.post(new Runnable(){
@@ -137,14 +159,28 @@ public class Computer extends Player{
 
 	private class Brain{
 		
+		private int centerRange = 2;
+		private int lineNum;
 		
+		public Brain(){
+			lineNum = BaseGoBangPanel.getLineNum();
+			
+			if(lineNum < 12){
+				centerRange = 2;
+			}else if(lineNum < 14){
+				centerRange = 3;
+			}else if(lineNum < 16){
+				centerRange = 4;
+			}else if(lineNum < 18){
+				centerRange = 5;
+			}else{
+				centerRange = 6;
+			}
+		}
 		/**
 		 * 随机落子
 		 */
 		public Point randomGo(){
-			//先获得一个随机下棋的电脑
-			//获得棋盘的行数与列数
-			int lineNum = panel.getLineNum();
 			
 			int x = random.nextInt(lineNum);
 			int y = random.nextInt(lineNum);
@@ -1594,7 +1630,7 @@ public class Computer extends Player{
 			return false;
 		}
 		/**
-		 * 检测是否有202或者103
+		 * TODO:检测是否有202或者103
 		 * @return
 		 */
 		public boolean checkTwoTwo(){
@@ -1907,14 +1943,13 @@ public class Computer extends Player{
 		 * 检测中间区域，用于给下第一个子，划定范围
 		 */
 		public Point centerBlockGo(){
-			//获得棋盘的行数与列数
-			int lineNum = panel.getLineNum();
 			//取棋盘的中间位置
 			Point centerPoint = new Point(lineNum / 2, lineNum / 2);
+			
 //			centerPoint.
 			//向中心的周围两格区域内随机取子，避免它取特别偏的位置
-			int offsetX = random.nextInt(3);
-			int offsetY = random.nextInt(3);
+			int offsetX = random.nextInt(centerRange);
+			int offsetY = random.nextInt(centerRange);
 			//true代表取正数，false代表取负数
 			boolean isPositiveNumX = random.nextBoolean();
 			boolean isPositiveNumY = random.nextBoolean();

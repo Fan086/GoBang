@@ -49,11 +49,11 @@ public class SettingActivity extends Activity implements OnClickListener{
 		
 		switch(v.getId()){
 		case R.id.btn_minus:
-			num = num > 8 ? num - 1 : 8;
+			num = num > SETTING_MIN_NUM ? num - 1 : SETTING_MIN_NUM;
 			tv_line_num.setText(num + "");
 			break;
 		case R.id.btn_plus:
-			num = num < 25 ? num + 1 : 25;
+			num = num < SETTING_MAX_NUM ? num + 1 : SETTING_MAX_NUM;
 			tv_line_num.setText(num + "");
 			break;
 		case R.id.btn_setting_confirm:

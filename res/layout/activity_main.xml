@@ -5,41 +5,39 @@
     android:background="@drawable/background"
      >
      <!-- letterSpaceing可用于控制文本之间的间距，不过需要api21以上 -->
-	<TextView
+	<!-- <TextView
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_centerHorizontal="true"
 	    android:layout_marginTop="100dp"
 	    android:text="@string/game_title"
-	    android:textSize="80sp" />
+	    android:textSize="80sp" /> -->
 	<Button 
 	    android:id="@+id/btn_human_computer_battle"
-	    android:layout_width="400dp"
-	    android:layout_height="wrap_content"
-	    android:layout_centerInParent="true"
-	    android:background="@drawable/button_shape"
-	    android:textSize="50sp"
-	    android:text="@string/human_computer_battle"/>
+	    android:layout_width="360dp"
+	    android:layout_height="105dp"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="420dp"
+	    android:background="@drawable/btn_human_vs_computer"
+	    />
 	<Button 
 	    android:id="@+id/btn_double_battle"
-	    android:layout_width="400dp"
-	    android:layout_height="wrap_content"
-	    android:layout_centerInParent="true"
+	    android:layout_width="360dp"
+	    android:layout_height="105dp"
+	    android:layout_centerHorizontal="true"
 	    android:layout_below="@id/btn_human_computer_battle"
-	    android:layout_marginTop="150dp"
-	    android:background="@drawable/button_shape"
-	    android:textSize="50sp"
-	    android:text="@string/double_battle"/>
+	    android:layout_marginTop="75dp"
+	    android:background="@drawable/btn_human_vs_human"
+	    />
 	<Button 
 	    android:id="@+id/btn_goto_setting"
-	    android:layout_width="400dp"
-	    android:layout_height="wrap_content"
-	    android:layout_centerInParent="true"
-	    android:layout_below="@id/btn_double_battle"
-	    android:layout_marginTop="150dp"
-	    android:background="@drawable/button_shape"
-	    android:textSize="50sp"
-	    android:text="@string/game_setting"/>
+	    android:layout_width="105dp"
+	    android:layout_height="105dp"
+	    android:layout_alignParentBottom="true"
+	    android:layout_marginBottom="100dp"
+	    android:layout_marginLeft="40dp"
+	    android:background="@drawable/btn_setting"
+	    />
 	
 
 

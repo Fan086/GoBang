@@ -13,6 +13,7 @@ import com.fndroid.gobang.utils.GoBangUtils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -39,6 +40,7 @@ public class SmartPanelActivity extends Activity implements OnClickListener{
 			panel.setWhitePlayer(computerPlayer);
 		}
 		
+		findViewById(R.id.btn_smart_home).setOnClickListener(this);
 		findViewById(R.id.btn_smart_restart).setOnClickListener(this);
 		findViewById(R.id.btn_smart_regret).setOnClickListener(this);
 		
@@ -48,6 +50,11 @@ public class SmartPanelActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
+		case R.id.btn_smart_home:
+			Intent intent = new Intent(this, MainActivity.class);
+			startActivity(intent);
+			finish();
+			break;
 		case R.id.btn_smart_restart:
 			GoBangUtils.restart(panel);
 			break;

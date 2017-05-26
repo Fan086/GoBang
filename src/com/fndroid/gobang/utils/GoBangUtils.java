@@ -87,6 +87,13 @@ public class GoBangUtils {
 				}else if(isBlackWin){
 					blackSteps.pop();
 					whiteSteps.pop();
+				}else if(isDoubleWin){
+					//这里是因为平局的时候，下完最后一步棋的人，要转换到另一方
+					if(smartPanel.isHumanGo){
+						smartPanel.computerSteps.pop();
+					}else{
+						smartPanel.humanSteps.pop();
+					}
 				}
 				
 				smartPanel.invalidate();

@@ -6,6 +6,7 @@ import com.fndroid.gobang.player.Player;
 import com.fndroid.gobang.utils.GoBangUtils;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,12 +26,18 @@ public class PanelActivity extends Activity implements OnClickListener {
 		panel.setWhitePlayer(whitePlayer);
 		panel.setBlackPlayer(blackPlayer);
 		
+		findViewById(R.id.btn_home).setOnClickListener(this);
 		findViewById(R.id.btn_restart).setOnClickListener(this);
 		findViewById(R.id.btn_regret).setOnClickListener(this);
 	}
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
+		case R.id.btn_home:
+			Intent intent = new Intent(this, MainActivity.class);
+			startActivity(intent);
+			finish();
+			break;
 		case R.id.btn_restart:
 			GoBangUtils.restart(panel);
 			break;
