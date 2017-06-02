@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+     >
+    
+	<!-- <TextView 
+	    android:id="@+id/tv_game_settings"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"
+	    android:textSize="60sp"
+	    android:text="740x600"/> -->
+
+	<RelativeLayout
+	    android:id="@+id/rl_setting_line_num"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="64dp"
+	    android:layout_marginRight="64dp"
+	    android:layout_marginTop="280dp" >
+
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
+	        android:text="行数与列数："
+	        android:textSize="32sp" />
+
+	    <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        android:orientation="horizontal" >
+
+	        <ImageButton
+	            android:id="@+id/btn_minus"
+	            android:layout_width="40dp"
+	            android:layout_height="48dp"
+	            android:background="@null"
+	            android:src="@drawable/minus" />
+
+	        <TextView
+	            android:id="@+id/tv_line_num"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="24dp"
+	            android:layout_marginRight="24dp"
+	            android:layout_gravity="center_vertical"
+	            android:text="15"
+	            android:textSize="32sp" />
+
+	        <ImageButton
+	            android:id="@+id/btn_plus"
+	            android:layout_width="40dp"
+	            android:layout_height="48dp"
+	            android:background="@null"
+	            android:src="@drawable/plus" />
+	    </LinearLayout>
+	</RelativeLayout>
+	<RelativeLayout
+	    android:id="@+id/rl_setting_human_piece_color"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/rl_setting_line_num"
+	   	android:layout_marginLeft="64dp"
+	    android:layout_marginRight="64dp"
+	    android:layout_marginTop="80dp" >
+
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
+	        android:text="落子顺序："
+	        android:textSize="32sp" />
+
+	    <RadioGroup
+	        android:id="@+id/rg_human_piece_order"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        android:orientation="horizontal" >
+			<RadioButton
+			    android:id="@+id/rb_human_first"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:checked="true"
+			    android:button="@null"
+			    android:drawableRight="@android:drawable/btn_radio"
+			    android:textSize="32sp"
+			    android:text="先手："/>
+			<RadioButton 
+			    android:id="@+id/rb_human_second"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:button="@null"
+			    android:drawableRight="@android:drawable/btn_radio"
+			    android:textSize="32sp"
+			    android:text="后手："/>
+	        
+	    </RadioGroup>
+	</RelativeLayout>
+	<Button
+	    android:id="@+id/btn_setting_confirm"
+	    android:layout_width="120dp"
+	    android:layout_height="48dp"
+	    android:layout_centerHorizontal="true"
+	    android:layout_below="@id/rl_setting_human_piece_color"
+	    android:layout_marginTop="120dp"
+	    android:background="@drawable/btn_confirm"
+
+	    
+	    />
+</RelativeLayout>

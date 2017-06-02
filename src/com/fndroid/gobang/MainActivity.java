@@ -3,6 +3,7 @@ package com.fndroid.gobang;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -16,6 +17,9 @@ public class MainActivity extends Activity implements OnClickListener{
 		findViewById(R.id.btn_human_computer_battle).setOnClickListener(this);
 		findViewById(R.id.btn_double_battle).setOnClickListener(this);
 		findViewById(R.id.btn_goto_setting).setOnClickListener(this);
+		
+		Display display = getWindowManager().getDefaultDisplay();
+		System.out.println("width:" + display.getWidth() + " height:" + display.getHeight());
 	}
 
 	@Override

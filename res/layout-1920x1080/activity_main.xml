@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+     >
+     <!-- letterSpaceing可用于控制文本之间的间距，不过需要api21以上 -->
+	<!-- <TextView
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="100dp"
+	    android:text="@string/game_title"
+	    android:textSize="80sp" /> -->
+	<Button 
+	    android:id="@+id/btn_human_computer_battle"
+	    android:layout_width="200dp"
+	    android:layout_height="64dp"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="260dp"
+	    android:background="@drawable/btn_human_vs_computer"
+	    />
+	<Button 
+	    android:id="@+id/btn_double_battle"
+	    android:layout_width="200dp"
+	    android:layout_height="64dp"
+	    android:layout_centerHorizontal="true"
+	    android:layout_below="@id/btn_human_computer_battle"
+	    android:layout_marginTop="60dp"
+	    android:background="@drawable/btn_human_vs_human"
+	    />
+	<Button 
+	    android:id="@+id/btn_goto_setting"
+	    android:layout_width="64dp"
+	    android:layout_height="64dp"
+	    android:layout_alignParentBottom="true"
+	    android:layout_marginBottom="50dp"
+	    android:layout_marginLeft="24dp"
+	    android:background="@drawable/btn_setting"
+	    />
+	
+
+
+</RelativeLayout>

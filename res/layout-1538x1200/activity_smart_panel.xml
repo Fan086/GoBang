@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/background"
+    tools:context="com.fndroid.gobang.PanelActivity" >
+	<!-- <TextView 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:textSize="50sp"
+	    android:text="人机界面"/> -->
+    <com.fndroid.gobang.panel.SmartGoBangPanel
+        android:id="@+id/panel_smart_gobang"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+         />
+	<RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40px"
+        android:layout_marginRight="40px"
+        android:layout_marginTop="60px"
+        >
+        <Button 
+            android:id="@+id/btn_smart_home"
+            android:layout_width="180dp"
+            android:layout_height="120dp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/home"/>
+        <Button
+	    android:id="@+id/btn_smart_restart"
+            android:layout_width="180dp"
+            android:layout_height="120dp"
+	    android:layout_centerHorizontal="true"
+	    android:background="@drawable/restart"
+	    />
+		<Button
+	    android:id="@+id/btn_smart_regret"
+            android:layout_width="180dp"
+            android:layout_height="120dp"
+	    android:layout_alignParentRight="true"
+	    android:background="@drawable/regret"
+	    />
+        
+    </RelativeLayout>
+</LinearLayout>
