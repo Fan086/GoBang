@@ -32,6 +32,7 @@ public class GoBangPanel extends BaseGoBangPanel{
 			float x = event.getX();
 			float y = event.getY();
 			
+			//获取修正后的坐标点
 			Point point = getValidPoint(x, y);
 			
 			//当黑白双方的步子集合中已存在这个坐标时，本次点击事件不处理
@@ -46,11 +47,13 @@ public class GoBangPanel extends BaseGoBangPanel{
 				mBlackSteps.push(point);
 			}
 			
+			//要view来重新绘制
 			invalidate();
 			
 			//检测是否游戏结束
 			GoBangUtils.isGameOver(this);
 			
+			//下棋方交换
 			mIsWhiteGo = !mIsWhiteGo;
 		}
 		//这里需要返回true，即告诉父控件这块区域的点击事件由我处理。这样才可获得ACTION_UP

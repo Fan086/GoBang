@@ -16,6 +16,9 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+/**
+ *人机对战的棋盘
+ */
 public class SmartGoBangPanel extends BaseGoBangPanel {
 
 	/**
@@ -103,13 +106,14 @@ public class SmartGoBangPanel extends BaseGoBangPanel {
 			//放入人类的落子栈中
 			humanSteps.push(point);
 			
-			
+			//更新界面
 			invalidate();
 			
 			isHumanGo = false;
 			//检测是否游戏结束并将结束位改变
 			GoBangUtils.isGameOver(this);
 
+			//电脑走棋
 			computerGo();
 			
 		}
@@ -118,9 +122,9 @@ public class SmartGoBangPanel extends BaseGoBangPanel {
 	}
 	
 	
-	
 	private void computerGo() {
 		synchronized(computerPlayer){
+			//唤醒电脑线程
 			computerPlayer.notify();
 		}
 //		computerPlayer.goPiece();

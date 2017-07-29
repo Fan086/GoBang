@@ -85,6 +85,7 @@
 	        android:layout_alignParentRight="true"
 	        android:layout_centerVertical="true"
 	        android:orientation="horizontal" >
+	        <!-- 将按钮设置在右边 -->
 			<RadioButton
 			    android:id="@+id/rb_human_first"
 			    android:layout_width="wrap_content"

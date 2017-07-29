@@ -29,10 +29,11 @@ public class Computer extends Player{
 		super(name, panel, colorFlag);
 		this.panel = (SmartGoBangPanel) panel;
 		random = new Random();
+		//为电脑组合一个大脑
 		brain = new Brain();
 	}
 	/**
-	 * 电脑下子的方法，下子的优先级：
+	 * 此方法在电脑下棋线程中执行。电脑下子的方法，下子的优先级：
 	 * 当人类或者电脑出现四字相连，或者202,301,103这样的情况时优先级最高
 	 * 	四字相连则拦截两端，其他情况堵住缺口
 	 * 当人类或电脑出现三子相连的情况，或者201，102这样的情况时，优先级第二
@@ -41,13 +42,15 @@ public class Computer extends Player{
 	 * 	俩子相连补两端，101补中间
 	 * 当电脑出现单独一个子的时候，下在那个子的四周
 	 * 当没有下子的时候，把子落在棋盘的中间区域
+	 * 当中间区域被下满时，在棋盘区域内随机落子
 	 */
 	public synchronized void goPiece() throws ConcurrentModificationException, StackOverflowError{
+		//当玩家走棋或者游戏结束时，电脑不允许走棋
 		if(panel.isHumanGo || panel.mIsGameOver){
 			return;
 		}
-//		SystemClock.sleep(1000);
 		
+		//拿到自己和玩家已经下好的步子
 		LinkedList<Point> humanSteps = panel.humanSteps;
 		LinkedList<Point> computerSteps = panel.computerSteps;
 		
@@ -65,24 +68,22 @@ public class Computer extends Player{
 		//检测电脑活201的情况，在只考虑一步的情况下，与半活的201没什么区别，不考虑放两边的情况
 		}else if(brain.checkComputerLiveTwoOne(this)){
 			checkOverAndUpdateUI();
-			
 		//检测人类活三的情况
 		}else if(brain.checkHumanLiveThree((Human) panel.humanPlayer)){
 			checkOverAndUpdateUI();
 		//检测人类活201的情况
 		}else if(brain.checkHumanLiveTwoOne((Human) panel.humanPlayer)){
 			checkOverAndUpdateUI();
-			
 		//检测电脑半活三的情况，可以用来冲4
 		}else if(brain.checkComputerHalfLiveThree(this)){
 			checkOverAndUpdateUI();
-			//检测电脑半活201的情况，可以用来冲4
+		//检测电脑半活201的情况，可以用来冲4
 		}else if(brain.checkComputerHalfLiveTwoOne(this)){
 			checkOverAndUpdateUI();
 		//检测电脑活二的情况
 		}else if(brain.checkComputerLiveTwo(this)){
 			checkOverAndUpdateUI();
-			//检测电脑活101的情况,如果有，则将棋子放入中间
+		//检测电脑活101的情况,如果有，则将棋子放入中间
 		}else if(brain.checkComputerLiveOneOne(this)){
 			checkOverAndUpdateUI();
 			//检测电脑活1的情况
@@ -90,7 +91,9 @@ public class Computer extends Player{
 			checkOverAndUpdateUI();
 		//中间区域随机落子
 		}else if(recursionTime < 15){
+			//随机生成一个待判定的子
 			point = brain.centerBlockGo();
+			//当这个坐标还没有被下过子时，则将其放入电脑的步子中
 			if(!humanSteps.contains(point) && !computerSteps.contains(point)){
 				System.out.println("在中间区域落子" + point);
 				computerSteps.push(point);
@@ -122,6 +125,9 @@ public class Computer extends Player{
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * 检测游戏是否结束，并更新ui
+	 */
 	private void checkOverAndUpdateUI() {
 		recursionTime = 0;
 		panel.isHumanGo = !panel.isHumanGo;
@@ -159,12 +165,19 @@ public class Computer extends Player{
 
 	private class Brain{
 		
+		/**
+		 * 定义中心区域的范围
+		 */
 		private int centerRange = 2;
+		/**
+		 * 棋盘的列数
+		 */
 		private int lineNum;
 		
 		public Brain(){
 			lineNum = BaseGoBangPanel.getLineNum();
 			
+			//初始化时，根据棋盘的列数，定义中心区域的范围
 			if(lineNum < 12){
 				centerRange = 2;
 			}else if(lineNum < 14){
@@ -178,7 +191,7 @@ public class Computer extends Player{
 			}
 		}
 		/**
-		 * 随机落子
+		 * 在棋盘范围内随机落子
 		 */
 		public Point randomGo(){
 			
@@ -193,6 +206,7 @@ public class Computer extends Player{
 		 * 检测五连的可能性,true表示可以连城5连
 		 */
 		public boolean checkComputerPosibleToFive(Point point, Orientation orientation){
+			//获取双方的走棋情况
 			LinkedList<Point> humanSteps = panel.humanSteps;
 			LinkedList<Point> computerSteps = panel.computerSteps;
 			
@@ -203,7 +217,7 @@ public class Computer extends Player{
 			
 			Point tmpPoint = new Point();
 			
-			//从左边开始计数
+			//以横向为例进行说明，从左边开始计数
 
 			switch(orientation){
 			case HORIZONTAL:
@@ -252,7 +266,7 @@ public class Computer extends Player{
 				break;
 			}
 			
-			//在从右边数
+			//再从右边数
 			switch(orientation){
 			case HORIZONTAL:
 				for(int i = x + 1; i < BaseGoBangPanel.getLineNum(); ++i){
@@ -307,7 +321,7 @@ public class Computer extends Player{
 		}
 		
 		/**
-		 * 检测电脑只有一子的情况
+		 * 检测电脑只有一个活子的情况
 		 */
 		public boolean checkComputerLiveOne(Computer computer){
 			LinkedList<Point> computerSteps = computer.getSteps();
@@ -337,6 +351,7 @@ public class Computer extends Player{
 		}
 		private boolean checkComputerLiveOneByOrientation(Point point, Orientation orientation) {
 			
+			//只有当有机会冲5时，才需要进行下一步的判断
 			if(!checkComputerPosibleToFive(point, orientation)){
 				return false;
 			}
@@ -350,7 +365,7 @@ public class Computer extends Player{
 			Point leftPoint = null;
 			Point tmpPoint = new Point();
 			
-			//以横向来说明，先检测它的左边时候有阻挡物（敌方有子或者边界的情况）
+			//以横向来说明，先检测它的左边是否有阻挡物（敌方有子或者边界的情况）
 			switch(orientation){
 			case HORIZONTAL:
 				tmpPoint.set(x - 1, y);
@@ -365,7 +380,7 @@ public class Computer extends Player{
 				tmpPoint.set(x + 1, y - 1);
 				break;
 			}
-			//如果左边被堵住，还需要看右边的情况；否则，用一个变量记住这个位置的前一个位置
+			//判断左边是否被堵住，没有的话还需进一步判断右边
 			if(GoBangUtils.checkIndexOutOfBoundary(tmpPoint) || humanSteps.contains(tmpPoint) || computerSteps.contains(tmpPoint)){
 				return false;
 			}
@@ -398,7 +413,7 @@ public class Computer extends Player{
 		}
 
 		/**
-		 * 检测电脑活101的情况，可以用来冲三或者201的情况。
+		 * 检测电脑活101的情况，可以用来冲三或者201。
 		 */
 		public boolean checkComputerLiveOneOne(Computer computer){
 			LinkedList<Point> computerSteps = computer.getSteps();
@@ -568,7 +583,7 @@ public class Computer extends Player{
 			Point leftPoint = null;
 			Point tmpPoint = new Point();
 			
-			//以横向来说明，先检测它的左边时候有阻挡物（敌方有子或者边界的情况）
+			//以横向来说明，先检测它的左边（敌方有子或者边界的情况）
 			switch(orientation){
 			case HORIZONTAL:
 				tmpPoint.set(x - 1, y);
@@ -879,7 +894,7 @@ public class Computer extends Player{
 				//如果右边被堵住，返回false
 				if(GoBangUtils.checkIndexOutOfBoundary(tmpPoint) || humanSteps.contains(tmpPoint) || computerSteps.contains(tmpPoint)){
 					return false;
-				//否则，在左右两边，随机选择一个方向将其加入
+				//否则，将中间的子加入
 				}else{
 					computerSteps.push(centerPoint);
 					return true;
@@ -1429,7 +1444,7 @@ public class Computer extends Player{
 			return false;
 		}
 		/**
-		 * 冲4有这么几种情况：活三，201且两边没有障碍
+		 * 冲4有这么几种情况：活三，201且两边没有障碍；这个方法并没有使用，而是拆成了几个小的方法来实现目标功能
 		 * @param point
 		 * @param player
 		 * @param isAttack
@@ -1633,6 +1648,7 @@ public class Computer extends Player{
 		 * TODO:检测是否有202或者103
 		 * @return
 		 */
+		@Deprecated
 		public boolean checkTwoTwo(){
 			return false;
 		}
@@ -1700,7 +1716,7 @@ public class Computer extends Player{
 		 * @param isAttack true表示进攻，false表示防守
 		 * @param point 当前需要判定的棋子
 		 * @param player 当前需要判定的玩家，可能是人类，也可能是电脑
-		 * @param orientation
+		 * @param orientation 方向
 		 * @return 冲5失败返回false
 		 */
 		private boolean checkLiveInLineByOrientation(int num, Point point, Player player, boolean isAttack, Orientation orientation) {

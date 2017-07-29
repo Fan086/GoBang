@@ -20,9 +20,13 @@ import android.os.Message;
 
 
 public class GoBangUtils {
+	//是否白棋获胜
 	private static boolean isWhiteWin;
+	//是否黑棋获胜
 	private static boolean isBlackWin;
+	//是否平局
 	private static boolean isDoubleWin;
+	//传入主线程的Looper，用于更新ui
 	private static Handler handler = new Handler(Looper.getMainLooper()){
 		public void handleMessage(Message msg) {
 			AlertDialog dialog = (AlertDialog) msg.obj;
@@ -42,6 +46,7 @@ public class GoBangUtils {
 		blackSteps.clear();
 		whiteSteps.clear();
 		
+		//人人对战的判定，直接让白色执先
 		if(panel instanceof GoBangPanel){
 			
 			panel.mIsWhiteGo = true;
@@ -50,17 +55,20 @@ public class GoBangUtils {
 		}else if(panel instanceof SmartGoBangPanel){
 			SmartGoBangPanel smartPanel = (SmartGoBangPanel)panel;
 			
+			//电脑先手
 			if(!smartPanel.isHumanFirst){
 				smartPanel.isHumanGo = false;
 				Computer computer = (Computer) smartPanel.whitePlayer;
-				//TODO:觉得有问题
+				//让电脑走一步棋
 				computerGo(computer);
+			//玩家先手
 			}else{
 				smartPanel.isHumanGo = true;
 				panel.invalidate();
 			}
 		}
 	}
+	
 	private static void computerGo(Computer computer) {
 		synchronized(computer){
 			computer.notify();
@@ -80,6 +88,7 @@ public class GoBangUtils {
 			
 			panel.mIsGameOver = false;
 			
+			//人机模式
 			if(panel instanceof SmartGoBangPanel){
 				SmartGoBangPanel smartPanel = (SmartGoBangPanel) panel;
 				if(isWhiteWin){
@@ -121,7 +130,7 @@ public class GoBangUtils {
 			//当电脑先手时，只剩一颗子的情况下无法悔棋；当玩家先手时，棋盘上没有子时，无法悔棋
 			if((!smartPanel.isHumanFirst && whiteSteps.size() == 1) ||
 					(smartPanel.isHumanFirst && whiteSteps.isEmpty() && blackSteps.isEmpty())
-					){
+				){
 				return;
 			}
 			blackSteps.pop();
@@ -135,7 +144,7 @@ public class GoBangUtils {
 	}
 	
 	/**
-	 * 判断是否游戏结束
+	 * 判断是否游戏结束,这个方法会在主线程和子线程中调用到
 	 * @return true表示游戏结束
 	 */
 	public static boolean isGameOver(BaseGoBangPanel panel){
@@ -172,7 +181,6 @@ public class GoBangUtils {
 //			dialog.show();
 			return true;
 		}
-		
 		return false;
 	}
 
@@ -181,10 +189,12 @@ public class GoBangUtils {
 	 * @return true表示是
 	 */
 	private static boolean checkIsDoubleWin(BaseGoBangPanel panel) {
+		//获取棋盘上的总格子数
 		int lineNum = BaseGoBangPanel.getLineNum();
 		int allUnit = lineNum * lineNum;
 		LinkedList<Point> mBlackSteps = panel.blackPlayer.getSteps();
 		LinkedList<Point> mWhiteSteps = panel.whitePlayer.getSteps();
+		//判断黑棋加白棋所下的子数是否等于总格子数
 		return mBlackSteps.size() + mWhiteSteps.size() == allUnit;
 	}
 
@@ -196,11 +206,13 @@ public class GoBangUtils {
 		if(point == null){
 			return false;
 		}
+		//判断各个方向是否有连成功的
 		boolean isHorizontalInLine = checkIsInLineByOrientation(point, points, HORIZONTAL);
 		boolean isVerticalInLine = checkIsInLineByOrientation(point, points, VERTICAL);
 		boolean isLeftDiagonalInLine = checkIsInLineByOrientation(point, points, LEFT_DIAGONAL);
 		boolean isRightDiagonalInLine = checkIsInLineByOrientation(point, points, RIGHT_DIAGONAL);
 		
+		//当有一个方向连成功时，则表示游戏可以结束了
 		if(isHorizontalInLine || isVerticalInLine || isLeftDiagonalInLine || isRightDiagonalInLine){
 			return true;
 		}
@@ -275,6 +287,7 @@ public class GoBangUtils {
 			}
 		}
 		
+		//当某个方向达到指定的子数时，表示连线成功
 		if(cnt >= BaseGoBangPanel.MAX_PIECES){
 			return true;
 		}

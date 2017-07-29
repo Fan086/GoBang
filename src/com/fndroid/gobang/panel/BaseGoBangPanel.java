@@ -125,6 +125,7 @@ public abstract class BaseGoBangPanel extends View{
 		mPaint.setDither(true);
 		mPaint.setStyle(Style.STROKE);
 		
+		//加载图片资源
 		mWhitePiece = BitmapFactory.decodeResource(getResources(), R.drawable.stone_w2);
 		mBlackPiece = BitmapFactory.decodeResource(getResources(), R.drawable.stone_b1);
 		mFocusImg = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
@@ -154,6 +155,7 @@ public abstract class BaseGoBangPanel extends View{
 	}
 
 	@Override
+	//View的回调方法，用于测量
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -173,6 +175,7 @@ public abstract class BaseGoBangPanel extends View{
 			size = widthSize;
 		}
 		
+		//将重新定义的棋盘宽高赋上
 		setMeasuredDimension(size, size);
 	}
 	@Override
@@ -207,6 +210,8 @@ public abstract class BaseGoBangPanel extends View{
 	private void drawFocus(Canvas canvas) {
 		if(mWhiteSteps.size() > 0){
 			Point whitePoint = mWhiteSteps.peek();
+			
+			//获得棋子的坐标
 			int x = whitePoint.x;
 			int y = whitePoint.y;
 			
@@ -229,6 +234,9 @@ public abstract class BaseGoBangPanel extends View{
 		
 	}
 
+	/**
+	 * 绘制棋子
+	 */
 	protected void drawPieces(Canvas canvas) {
 		if(whitePlayer == null || blackPlayer == null){
 			throw new RuntimeException("player has not set, please call setWhitePlayer and setBlackPlayer before call this method");
@@ -240,6 +248,7 @@ public abstract class BaseGoBangPanel extends View{
 			int x = point.x;
 			int y = point.y;
 			
+			//根据坐标及偏移量，对棋子中心点的位置进行调整
 			float left = x * LINE_WIDTH + LINE_WIDTH / 8;
 			float top = y * LINE_WIDTH + LINE_WIDTH / 8;
 			
@@ -261,23 +270,27 @@ public abstract class BaseGoBangPanel extends View{
 
 	/**
 	 * 绘制棋盘
-	 * @param canvas
 	 */
 	private void drawBoard(Canvas canvas) {
 		//绘制横线和纵线，两者合并在了一起
 		for(int i = 0; i < mLineNum; ++i){
-			//计算出每行的y的位置
+			//计算出每行的y的位置，为了让线条与棋盘的开始位置具有一定的间隔，这里取一半的行宽
 			float y = i * LINE_WIDTH + LINE_WIDTH / 2;
+			
+			//计算x坐标的开始位置和结束位置
 			float startX = LINE_WIDTH / 2;
 			float stopX = PANEL_WIDTH - startX;
+			
+			//画横线
 			canvas.drawLine(startX, y, stopX, y, mPaint);
 			
+			//画竖线
 			canvas.drawLine(y, startX, y, stopX, mPaint);
 		}
 	}
 
 	/**
-	 * 获取棋盘的宽高
+	 * 获取棋盘的列数
 	 * @return 棋盘的宽高
 	 */
 	public static int getLineNum() {

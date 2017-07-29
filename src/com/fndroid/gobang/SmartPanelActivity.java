@@ -19,7 +19,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+/**
+ *人机对战的activity
+ */
 public class SmartPanelActivity extends Activity implements OnClickListener{
+	/**
+	 * 人机对战的棋盘
+	 */
 	BaseGoBangPanel panel;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +34,13 @@ public class SmartPanelActivity extends Activity implements OnClickListener{
 		
 		panel = (SmartGoBangPanel) findViewById(R.id.panel_smart_gobang);
 		
+		//先获取设置中的信息，默认用户先走棋
 		SharedPreferences sp = this.getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
 		boolean isHumanFirst = sp.getBoolean(HUMAN_FIRST, true);
+		
 		Player humanPlayer = new Human(panel, isHumanFirst);
 		Player computerPlayer = new Computer(panel, !isHumanFirst);
+		
 		if(isHumanFirst){
 			panel.setWhitePlayer(humanPlayer);
 			panel.setBlackPlayer(computerPlayer);

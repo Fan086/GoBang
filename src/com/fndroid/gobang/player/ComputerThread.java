@@ -21,6 +21,7 @@ public class ComputerThread extends Thread{
 		while(true){
 			try {
 				Thread.sleep(GoBangConstants.COMPUTER_SLEEP_TIME);
+				//执行走棋方法
 				computer.goPiece();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
